@@ -326,6 +326,5 @@ class sfMailer extends Swift_Mailer
 
   static public function initialize()
   {
-    require_once sfConfig::get('sf_symfony_lib_dir').'/vendor/swiftmailer/swift_init.php';
   }
 }
