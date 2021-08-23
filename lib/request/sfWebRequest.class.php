@@ -632,35 +632,42 @@ class sfWebRequest extends sfRequest
    */
   public function splitHttpAcceptHeader($header)
   {
+    $i = 0;
     $values = array();
-    $groups = array();
     foreach (array_filter(explode(',', $header)) as $value)
     {
       // Cut off any q-value that might come after a semi-colon
       if ($pos = strpos($value, ';'))
       {
-        $q     = trim(substr($value, strpos($value, '=') + 1));
-        $value = substr($value, 0, $pos);
+        $q     = (float) trim(substr($value, $pos + 3));
+        $value = trim(substr($value, 0, $pos));
       }
       else
       {
         $q = 1;
       }
 
-      $groups[$q][] = $value;
+      $values[$value] = array($q, $i++);
     }
-
-    krsort($groups);
-
-    foreach ($groups as $q => $items) {
-      if (0 < $q) {
-        foreach ($items as $value) {
-          $values[] = trim($value);
+    /**
+     * Implement reverse stable sort instead of arsort
+     */
+    uasort($values, function ($a, $b) {
+      if ($a[0] == $b[0]) {
+        // Can not be same since we used $i++
+        if ($a[1] < $b[1]) {
+          return 1;
+        } else {
+          return -1;
         }
+      } elseif ($a[0] < $b[0]) {
+        return 1;
+      } else {
+        return -1;
       }
-    }
+    });
 
-    return $values;
+    return array_keys($values);
   }
 
   /**
