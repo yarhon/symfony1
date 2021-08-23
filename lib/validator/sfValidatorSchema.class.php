@@ -382,7 +382,7 @@ class sfValidatorSchema extends sfValidatorBase implements ArrayAccess
 
   protected function getBytes($value)
   {
-    $value = trim($value);
+    $value = (int) $value;
     switch (strtolower($value[strlen($value) - 1]))
     {
       // The 'G' modifier is available since PHP 5.1.0
