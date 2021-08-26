@@ -61,7 +61,7 @@ class sfMailer extends Swift_Mailer
       'logging' => false,
       'delivery_strategy' => 'realtime',
       'transport' => array(
-        'class' => 'Swift_MailTransport',
+        'class' => 'Swift_SendmailTransport',
         'param' => array(),
        ),
     ), $options);
@@ -144,7 +144,8 @@ class sfMailer extends Swift_Mailer
     if (sfMailer::NONE == $this->strategy)
     {
       // must be registered after logging
-      $transport->registerPlugin(new Swift_Plugins_BlackholePlugin());
+      // @TODO: commented because swiftmailer doesn't have class Swift_Plugins_BlackholePlugin
+      //  $transport->registerPlugin(new Swift_Plugins_BlackholePlugin());
     }
 
     // preferences
@@ -278,12 +279,12 @@ class sfMailer extends Swift_Mailer
   /**
    * Sends the given message.
    *
-   * @param Swift_Transport $transport         A transport instance
+   * @param Swift_Mime_SimpleMessage $transport         A transport instance
    * @param string[]        &$failedRecipients An array of failures by-reference
    *
    * @return int|false The number of sent emails
    */
-  public function send(Swift_Mime_Message $message, &$failedRecipients = null)
+  public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
   {
     if ($this->force)
     {
